@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { getTodos } from './api/todos';
 
-import { TodoList } from './components/TodoList/TodoList';
-import { Footer } from './components/Footer/Footer';
-import { Header } from './components/Header/Header';
-import { ErrorNotifications } from './components/Errors/ErrorNotiofications';
+import { TodoList } from './components/TodoList';
+import { Footer } from './components/Footer';
+import { Header } from './components/Header';
+import { ErrorNotifications } from './components/Errors';
 
 import { Todo } from './types/Todo';
 import { Errors } from './types/ErrorsEnum';
@@ -18,35 +18,16 @@ export const App: React.FC = () => {
   );
 
   useEffect(() => {
+    setErrorNotification(Errors.DEFAULT);
     getTodos()
       .then(setTodos)
       .catch(() => {
         setErrorNotification(Errors.LOADING);
       });
-  }, []);
-
-  useEffect(() => {
     setTimeout(() => {
       setErrorNotification(Errors.DEFAULT);
     }, 3000);
-  });
-
-  const activeTodosCount = todos.filter(todo => !todo.completed).length;
-
-  const getFilteredTodos = () => {
-    switch (filter) {
-      case Filter.ACTIVE:
-        return todos.filter(todo => !todo.completed);
-
-      case Filter.COMPLETED:
-        return todos.filter(todo => todo.completed);
-
-      default:
-        return todos;
-    }
-  };
-
-  const filteredTodos = getFilteredTodos();
+  }, []);
 
   return (
     <div className="todoapp">
@@ -55,18 +36,19 @@ export const App: React.FC = () => {
       <div className="todoapp__content">
         <Header />
 
-        {todos.length && <TodoList todos={filteredTodos} />}
+        {!!todos.length && (
+          <>
+            <TodoList todos={todos} filter={filter} />
 
-        {todos.length && (
-          <Footer
-            activeTodosCount={activeTodosCount}
-            onFilterChange={setFilter}
-            filter={filter}
-          />
+            <Footer onFilterChange={setFilter} filter={filter} todos={todos} />
+          </>
         )}
       </div>
 
-      <ErrorNotifications errorNotification={errorNotification} />
+      <ErrorNotifications
+        errorNotification={errorNotification}
+        setErrorNotification={setErrorNotification}
+      />
     </div>
   );
 };

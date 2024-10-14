@@ -1,18 +1,24 @@
 import React from 'react';
-import { Todo } from '../../types/Todo';
 import cn from 'classnames';
+
+import { Todo } from '../../types/Todo';
+import { Filter } from '../../types/FilterEnum';
+import { getFilteredTodos } from '../../utils/getFilteredTodos';
 
 interface Props {
   todos: Todo[];
+  filter: Filter;
 }
 
-export const TodoList: React.FC<Props> = ({ todos }) => {
+export const TodoList: React.FC<Props> = ({ todos, filter }) => {
   const isBeingEdited = false; // This variable will be realised in the next task
   const isBeingSaved = false; // This variable will be realised in the next task
 
+  const filteredTodos = getFilteredTodos(todos, filter);
+
   return (
     <section className="todoapp__main" data-cy="TodoList">
-      {todos.map(todo => (
+      {filteredTodos.map(todo => (
         <div
           key={todo.id}
           data-cy="Todo"

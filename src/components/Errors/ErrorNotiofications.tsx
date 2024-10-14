@@ -4,9 +4,13 @@ import cn from 'classnames';
 
 interface Props {
   errorNotification: Errors;
+  setErrorNotification: React.Dispatch<React.SetStateAction<Errors>>;
 }
 
-export const ErrorNotifications: React.FC<Props> = ({ errorNotification }) => {
+export const ErrorNotifications: React.FC<Props> = ({
+  errorNotification,
+  setErrorNotification,
+}) => {
   return (
     <div
       data-cy="ErrorNotification"
@@ -14,7 +18,12 @@ export const ErrorNotifications: React.FC<Props> = ({ errorNotification }) => {
         hidden: errorNotification === Errors.DEFAULT,
       })}
     >
-      <button data-cy="HideErrorButton" type="button" className="delete" />
+      <button
+        data-cy="HideErrorButton"
+        type="button"
+        className="delete"
+        onClick={() => setErrorNotification(Errors.DEFAULT)}
+      />
       {errorNotification}
     </div>
   );

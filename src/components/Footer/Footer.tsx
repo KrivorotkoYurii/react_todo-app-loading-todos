@@ -1,18 +1,20 @@
 import React from 'react';
-import { Filter } from '../../types/FilterEnum';
 import cn from 'classnames';
+import { Filter } from '../../types/FilterEnum';
+import { Todo } from '../../types/Todo';
+import { getLinkHref } from '../../utils/getLinkHref';
 
 interface Props {
-  activeTodosCount: number;
   onFilterChange: React.Dispatch<React.SetStateAction<Filter>>;
   filter: Filter;
+  todos: Todo[];
 }
 
-export const Footer: React.FC<Props> = ({
-  activeTodosCount,
-  onFilterChange,
-  filter,
-}) => {
+export const Footer: React.FC<Props> = ({ onFilterChange, filter, todos }) => {
+  const activeTodosCount = todos.filter(todo => !todo.completed).length;
+
+  const linksValues = Object.values(Filter);
+
   return (
     <footer className="todoapp__footer" data-cy="Footer">
       <span className="todo-count" data-cy="TodosCounter">
@@ -20,34 +22,17 @@ export const Footer: React.FC<Props> = ({
       </span>
 
       <nav className="filter" data-cy="Filter">
-        <a
-          href="#/"
-          className={cn('filter__link', { selected: filter === Filter.ALL })}
-          data-cy="FilterLinkAll"
-          onClick={() => onFilterChange(Filter.ALL)}
-        >
-          {Filter.ALL}
-        </a>
-
-        <a
-          href="#/active"
-          className={cn('filter__link', { selected: filter === Filter.ACTIVE })}
-          data-cy="FilterLinkActive"
-          onClick={() => onFilterChange(Filter.ACTIVE)}
-        >
-          {Filter.ACTIVE}
-        </a>
-
-        <a
-          href="#/completed"
-          className={cn('filter__link', {
-            selected: filter === Filter.COMPLETED,
-          })}
-          data-cy="FilterLinkCompleted"
-          onClick={() => onFilterChange(Filter.COMPLETED)}
-        >
-          {Filter.COMPLETED}
-        </a>
+        {linksValues.map(linkValue => (
+          <a
+            key={linkValue}
+            href={getLinkHref(linkValue)}
+            className={cn('filter__link', { selected: filter === linkValue })}
+            data-cy={`FilterLink${linkValue}`}
+            onClick={() => onFilterChange(linkValue)}
+          >
+            {linkValue}
+          </a>
+        ))}
       </nav>
 
       <button
